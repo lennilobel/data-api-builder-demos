@@ -1,4 +1,35 @@
 :========================================================================
+: Prep
+:========================================================================
+
+	• Print this script
+	• Open this solution
+	• Required installations
+		• Data API Builder
+			• Ensure .NET 8 runtime is installed
+				• dotnet --list-runtimes
+				• If it isn't installed, download and install from https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+			• Install DAB
+				• dotnet tool install --global Microsoft.DataApiBuilder
+			• Confirm installation
+				• dab --version
+		• Postman
+		• Azure CLI
+			• https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli
+	• Open Chrome Browser
+		• Use guest profile, or else az login may not work
+		• Open tab to https://jwt.ms
+	• Open two command prompts
+		• One for dab, the other for az
+		• CD into \temp\sql on both
+	• Open Postman
+	• Open SSMS
+		• Open all DAB demo script files
+	• Open Azure portal
+		• Navigate to Entra ID tenant for this demo
+
+
+:========================================================================
 : SQL Server and Azure SQL
 :========================================================================
 
