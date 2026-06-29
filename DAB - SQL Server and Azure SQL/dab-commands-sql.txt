@@ -19,9 +19,9 @@
 	• Open Chrome Browser
 		• Use guest profile, or else az login may not work
 		• Open tab to https://jwt.ms
-	• Open two command prompts
-		• One for dab, the other for az
-		• CD into \temp\sql on both
+	• Open three command prompts
+		• One for dab, one for az, and one for mcp
+		• CD into \temp\sql on all three
 	• Open Postman
 	• Open SSMS
 		• Open all DAB demo script files
@@ -166,50 +166,29 @@ npx -y @modelcontextprotocol/inspector
 :   URL: http://localhost:5000/mcp
 :   Click Connect
 :   List tools
+:	Call describe_entities
 :   Call read_records for Book
-:   Call execute_entity for GetBooksCowrittenByAuthor
-:
-: Show available tools:
-:   describe_entities
-:   read_records
-:   create_record
-:   update_record
-:   delete_record
-:   execute_entity
-:   aggregate_records
+:   Call execute_entity for GetBooksCowrittenByAuthor (copy parameters payload from Postman)
 :
 : Explain:
 :   REST is for HTTP clients
 :   GraphQL is for structured query clients
 :   MCP is for AI agents
-
-: Run MCP demos:
 :
-: 1. Describe available entities
-:   Tool: describe_entities
-:   Expected: Book, Author, BookDetail, GetBooksCowrittenByAuthor
+: Key points:
+:   No new database code was written
+:   No MCP tools were manually coded
+:   DAB generated REST, GraphQL, and MCP surfaces from the same config
 :
-: 2. Read records from Book
-:   Tool: read_records
-:   Entity: Book
-:   Expected: Returns books without writing SQL
-:
-: 3. Aggregate books
-:   Tool: aggregate_records
-:   Entity: Book
-:   Example: count books, group by Year
-:
-: 4. Execute stored procedure
-:   Tool: execute_entity
-:   Entity: GetBooksCowrittenByAuthor
-:   Parameters:
-:       SearchType = C
-:       Author = Asimov
-:
-: Key point:
-:   No new database code was written.
-:   No MCP tools were manually coded.
-:   DAB generated REST, GraphQL, and MCP surfaces from the same config.
+: Run DabMcpDemo
+:	How many books are there in the library?
+:	How many books were written by just a single author?
+:	List them
+:	How many books were co-written by two or more authors?
+:	List them
+:	Show me the books written by Issac Asimov
+:	What books do you have that were published in 2020 or later?
+:	I'm looking for books that were co-written by two or more authors, and published in 2020 or later.
 
 :========================================================================
 : Security
