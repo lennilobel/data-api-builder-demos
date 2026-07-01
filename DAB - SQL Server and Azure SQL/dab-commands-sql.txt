@@ -181,14 +181,6 @@ npx -y @modelcontextprotocol/inspector
 :   DAB generated REST, GraphQL, and MCP surfaces from the same config
 :
 : Run DabMcpDemo
-:	How many books are there in the library?
-:	How many books were written by just a single author?
-:	List them
-:	How many books were co-written by two or more authors?
-:	List them
-:	Show me the books written by Issac Asimov
-:	What books do you have that were published in 2020 or later?
-:	I'm looking for books that were co-written by two or more authors, and published in 2020 or later.
 
 :========================================================================
 : Security
@@ -260,10 +252,10 @@ dab start
 :	"Create a book", fails with 403
 :	"Get all authors", succeeds (unsecured entity)
 
-: ME-ID configuration in Azure portal
+: Microsoft Entra ID configuration in Azure portal
 :	Switch to DAB Library directory
-:	Open Azure Active Directory page
-:	Click App registrations on sidebar
+:	Open Microsoft Entra ID page
+:	Click Manage > App Registrations on sidebar
 :		Click Data API Builder Demo
 :		Click Manage > App roles on sidebar
 :		Note two roles
