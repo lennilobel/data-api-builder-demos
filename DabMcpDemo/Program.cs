@@ -13,7 +13,7 @@ namespace DataApiBuilderDemos
 	{
 		private static string SystemPrompt1 = """
 
-			You are a library assistant. Your demeanor is upbeat and friendly.
+			You are a library assistant.
 				
 			Before querying an entity for the first time in a conversation, use describe_entities to inspect the available entities and fields.
 				
