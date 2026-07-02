@@ -19,6 +19,7 @@ AS
 		b.Title,
 		b.Year,
 		b.Pages,
+		AuthorCount = (SELECT COUNT(*) FROM BookAuthor AS ba WHERE ba.BookId = b.BookId),
 		aa.Authors
 	FROM
 		Book AS b

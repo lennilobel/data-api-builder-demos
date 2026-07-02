@@ -11,46 +11,50 @@ namespace DataApiBuilderDemos
 {
 	internal class Program
 	{
-		private static string SystemPrompt1 = """
+		private static readonly string LibraryAssistantMinimalPrompt = """
 
 			You are a library assistant.
-				
+			You can answer questions about the books and authors in the library.
+			Explain answers clearly and briefly.
+			Do not invent data.
+			Do not guess at schema (i.e., don't try to figure out plausible entity names and field names).
+			Do not call describe_entities or read_records or execute_entity unless you are sure that the entity and fields exist.
+
+		""";
+
+		private static readonly string LibraryAssistantVerbosePrompt = """
+
+			You are a library assistant.
+			You can answer questions about the books and authors in the library.
+			Explain answers clearly and briefly.
+			Do not invent data.
+		
 			Before querying an entity for the first time in a conversation, use describe_entities to inspect the available entities and fields.
 				
 			After you understand the schema, remember it for the remainder of the conversation.
 				
-			Use read_records for tables and views.
-			Use execute_entity for stored procedure entities.
-			Do not invent data.
-			Explain answers clearly and briefly.
+			Use the read_records MCP tool for tables and views.
+			Use the execute_entity MCP tool for stored procedure entities.
 			Number each book in the list of books you return, and include page count and year.
-			If the result may be paged or limited, continue retrieving additional records until all relevant records have been checked.
 		
-			Use these field mappings when interpreting user requests:
+			Use these Data API Builder entities and field mappings when interpreting user requests:
 				
-			Book:
-			- "book", "title", "book title", and "book name" all refer to Book.Title.
-			- "page count", "pages", and "number of pages" refer to Book.Pages.
-			- "year", "publication year", "published", and "published year" refer to Book.Year.
+			Book entity:
+			- Use Book.Title for questions relating to "book", "title", "book title", and "book name".
+			- Use Book.Pages for questions about "page count", "pages", and "number of pages".
+			- Use Book.Year for questions concerning "year", "publication year", "published", and "published year".
 				
-			Author:
-			- "author", "author name", and "writer" refer to the combination of Author.FirstName, Author.MiddleName, and Author.LastName.
-					
-			If the user asks for books written by a specific author, use the BookDetail entity first. 
-			BookDetail exposes book data with comma-separated aggregated author names in the Authors field.
+			If the user asks for books written by a specific author, or if they ask any question related to number of authors,
+			use the BookDetail entity first. BookDetail exposes book data with author count and comma-separated aggregated author names in
+			the Authors field.
 				
-			BookDetail:
+			BookDetail entity:
 			- Use BookDetail.Authors to match author names such as "Isaac Asimov".
+			- Use BookDetail.AuthorCount to determine the number of authors of each book.
 			- Use BookDetail.Title for the book name.
 			- Use BookDetail.Pages for page count.
 			- Use BookDetail.Year for publication year.
 				
-			Do not try to join Book and Author directly with read_records.
-			DAB MCP read_records cannot perform relationship traversal or joins.
-				
-			When using read_records, request enough rows to answer the question completely.
-			If the result may be paged or limited, continue retrieving additional records until all relevant records have been checked.
-			
 			If the user asks for books co-written by a specific author, use execute_entity with GetBooksCowrittenByAuthor stored procedure first.
 		
 			GetBooksCowrittenByAuthor: 
@@ -60,7 +64,7 @@ namespace DataApiBuilderDemos
 
 		""";
 
-		private static string SystemPrompt2 = """
+		private static readonly string ExplainProcessPrompt = """
 
 			Beneath each answer, draw a line and then provide a brief explanation of how you arrived at the answer, including which entity
 			and fields were used to retrieve the data. Describe your process as numbered steps.
@@ -72,7 +76,7 @@ namespace DataApiBuilderDemos
 			"How many books are there in the library?",
 			"What books were written by just a single author?",
 			"What books were co-written by two or more authors?",
-			"Show me the books written by Isaac Asimov",
+			"Show me the books written or co-written by Isaac Asimov",
 			"Show me the books written by Isaac Asimov, with no other co-authors",
 			"Show me the books co-written by an author whose name contains Asimov",
 			"Show me the books co-written by an author whose name starts with Asimov",
@@ -103,7 +107,6 @@ namespace DataApiBuilderDemos
 
 			var transport = new HttpClientTransport(new HttpClientTransportOptions
 			{
-				Name = "DAB Library MCP",
 				Endpoint = new Uri("http://localhost:5000/mcp"),
 				TransportMode = HttpTransportMode.StreamableHttp
 			});
@@ -112,15 +115,6 @@ namespace DataApiBuilderDemos
 
 			var tools = await mcpClient.ListToolsAsync();
 
-			Console.WriteLine("I am a library assistant. I can answer questions about the books and authors in the library.");
-			Console.WriteLine();
-			Console.WriteLine("My knowledge is based on a library database using these MCP Tools exposed by Data API Builder:");
-			foreach (McpClientTool tool in tools)
-			{
-				Console.WriteLine($"- {tool.Name}");
-			}
-
-			Console.WriteLine();
 
 			var chatOptions = new ChatOptions
 			{
@@ -134,23 +128,35 @@ namespace DataApiBuilderDemos
 
 			var messages = new List<ChatMessage>
 			{
-				new(ChatRole.System, SystemPrompt1),
-//				new(ChatRole.System, SystemPrompt2),
+				new(ChatRole.System, LibraryAssistantMinimalPrompt),
+//				new(ChatRole.System, LibraryAssistantVerbosePrompt),
+//				new(ChatRole.System, ExplainProcessPrompt),
 			};
+
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine("I am a library assistant. I can answer questions about the books and authors in the library.");
+			Console.WriteLine("My knowledge is based on a library database using MCP Tools exposed by Data API Builder, and these prompts:");
+			Console.ForegroundColor = ConsoleColor.White;
+			foreach (var message in messages)
+			{
+				Console.WriteLine(" ┌── " + message.Text.Replace("\r\n", "\r\n │ ").Replace("\t", string.Empty));
+				Console.WriteLine(" └── ");
+			}
 
 			var autoQuestionIndex = 0;
 
 			while (true)
 			{
+				Console.ResetColor();
 				Console.WriteLine();
-				Console.Write("[M]anual, [A]uto, [ESC] Exit > ");
+				Console.Write("[M] = Manual / [A] = Auto / [Q] = Quit: ");
 
-				var key = Console.ReadKey(intercept: true);
+				var key = Console.ReadKey();
 				Console.WriteLine();
 
 				var prompt = default(string);
 
-				if (key.Key == ConsoleKey.Escape)
+				if (key.Key == ConsoleKey.Q)
 				{
 					break;
 				}
@@ -160,7 +166,6 @@ namespace DataApiBuilderDemos
 					Console.Write("> ");
 					Console.ForegroundColor = ConsoleColor.Cyan;
 					prompt = Console.ReadLine();
-					Console.ResetColor();
 
 					if (string.IsNullOrWhiteSpace(prompt))
 					{
@@ -180,10 +185,11 @@ namespace DataApiBuilderDemos
 					Console.ForegroundColor = ConsoleColor.Cyan;
 					Console.WriteLine();
 					Console.WriteLine(prompt);
-					Console.ResetColor();
 				}
 				else
 				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("Invalid option. Please select M, A, or Q.");
 					continue;
 				}
 
