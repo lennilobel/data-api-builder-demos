@@ -148,7 +148,7 @@ namespace DataApiBuilderDemos
 			{
 				Console.ResetColor();
 				Console.WriteLine();
-				Console.Write("[M] = Manual / [A] = Auto / [Q] = Quit: ");
+				Console.Write("[A] = Auto / [M] = Manual / [Q] = Quit: ");
 
 				var key = Console.ReadKey();
 				Console.WriteLine();
@@ -188,7 +188,7 @@ namespace DataApiBuilderDemos
 				else
 				{
 					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("Invalid option. Please select M, A, or Q.");
+					Console.WriteLine("Invalid option. Please select A, M, or Q.");
 					continue;
 				}
 
