@@ -111,10 +111,9 @@ namespace DataApiBuilderDemos
 				TransportMode = HttpTransportMode.StreamableHttp
 			});
 
-			await using McpClient mcpClient = await McpClient.CreateAsync(transport);
+			await using var mcpClient = await McpClient.CreateAsync(transport);
 
 			var tools = await mcpClient.ListToolsAsync();
-
 
 			var chatOptions = new ChatOptions
 			{
@@ -156,9 +155,19 @@ namespace DataApiBuilderDemos
 
 				var prompt = default(string);
 
-				if (key.Key == ConsoleKey.Q)
+				if (key.Key == ConsoleKey.A)
 				{
-					break;
+					if (autoQuestionIndex >= AutoQuestions.Length)
+					{
+						Console.WriteLine("No more auto-questions");
+						break;
+					}
+
+					prompt = AutoQuestions[autoQuestionIndex++];
+
+					Console.ForegroundColor = ConsoleColor.Cyan;
+					Console.WriteLine();
+					Console.WriteLine(prompt);
 				}
 				else if (key.Key == ConsoleKey.M)
 				{
@@ -172,19 +181,9 @@ namespace DataApiBuilderDemos
 						continue;
 					}
 				}
-				else if (key.Key == ConsoleKey.A)
+				else if (key.Key == ConsoleKey.Q)
 				{
-					if (autoQuestionIndex >= AutoQuestions.Length)
-					{
-						Console.WriteLine("No more auto-questions");
-						break;
-					}
-
-					prompt = AutoQuestions[autoQuestionIndex++];
-
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine();
-					Console.WriteLine(prompt);
+					break;
 				}
 				else
 				{
