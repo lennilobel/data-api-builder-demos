@@ -24,6 +24,7 @@ namespace DataApiBuilderDemos
 			Do not guess at schema (i.e., don't try to figure out plausible entity names and field names).
 			Call the describe_entities tool to discover schema
 			Call the read_records tool to retrieve data from table and view entities 
+			Call the aggregate_records tool to count entities such as books and authors
 			Call the execute_entity tool to retrieve data from stored procedure entities 
 			Do not call read_records or execute_entity unless you are sure that the entity and fields exist
 
@@ -42,6 +43,7 @@ namespace DataApiBuilderDemos
 			Do not guess at schema (i.e., don't try to figure out plausible entity names and field names).
 			Call the describe_entities tool to discover schema
 			Call the read_records tool to retrieve data from table and view entities 
+			Call the aggregate_records tool to count entities such as books and authors
 			Call the execute_entity tool to retrieve data from stored procedure entities 
 			Do not call read_records or execute_entity unless you are sure that the entity and fields exist
 				
@@ -91,12 +93,13 @@ namespace DataApiBuilderDemos
 		private static readonly string[] AutoQuestions =
 		[
 			"How many books are there in the library?",
+			"How many authors are there across all books in the library?",
 			"What books were written by just a single author?",
 			"What books were co-written by two or more authors?",
-			"Show me the books written or co-written by Isaac Asimov",
-			"Show me the books written by Isaac Asimov, with no other co-authors",
-			"Show me the books co-written by an author whose name contains Asimov",
-			"Show me the books co-written by an author whose name starts with Asimov",
+			"Show me the books written or co-written by Isaac Asimov.",
+			"Show me the books written by Isaac Asimov, with no other co-authors.",
+			"Show me the books co-written by an author whose name contains Asimov.",
+			"Show me the books co-written by an author whose name starts with Asimov.",
 			"What books do you have that were published in 2020 or later?",
 			"I'm looking for books that were co-written by two or more authors, and published in 2020 or later.",
 			"Show me your sci-fi books.",
