@@ -88,6 +88,8 @@ namespace DataApiBuilderDemos
 
 		static async Task Main(string[] args)
 		{
+			// Retrieve the application's Azure OpenAI configuration
+
 			var configuration = new ConfigurationBuilder()
 				.AddUserSecrets<Program>()
 				.Build();
@@ -96,14 +98,21 @@ namespace DataApiBuilderDemos
 			var openAiApiKey = configuration["AzureOpenAI:ApiKey"];
 			var openAiDeploymentName = configuration["AzureOpenAI:DeploymentName"];
 
+			// Create a low-level chat client that communicates directly with Azure OpenAI
+
 			var endpoint = new Uri($"https://{openAiHostName}.openai.azure.com/");
 			var credential = new AzureKeyCredential(openAiApiKey);
 			var azureOpenAiClient = new AzureOpenAIClient(endpoint, credential);
+
 			var openAiChatClient = azureOpenAiClient.GetChatClient(openAiDeploymentName);
 
+			// Wrap the Azure OpenAI chat client with middleware that enables automatic MCP tool invocation
+
 			var chatClient = new ChatClientBuilder(openAiChatClient.AsIChatClient())
-				.UseFunctionInvocation()
+				.UseFunctionInvocation()    // Enables automatic execution of MCP tool calls requested by the AI model
 				.Build();
+
+			// Establish a connection to the MCP endpoint exposed by Data API Builder
 
 			var transport = new HttpClientTransport(new HttpClientTransportOptions
 			{
@@ -112,6 +121,8 @@ namespace DataApiBuilderDemos
 			});
 
 			await using var mcpClient = await McpClient.CreateAsync(transport);
+
+			// Get the available tools from the MCP endpoint and register as chat options for the AI model
 
 			var tools = await mcpClient.ListToolsAsync();
 
@@ -125,12 +136,16 @@ namespace DataApiBuilderDemos
 				chatOptions.Tools.Add(tool);
 			}
 
+			// Configure the chat client with the library assistant prompt(s)
+
 			var messages = new List<ChatMessage>
 			{
 				new(ChatRole.System, LibraryAssistantMinimalPrompt),
 //				new(ChatRole.System, LibraryAssistantVerbosePrompt),
 //				new(ChatRole.System, ExplainProcessPrompt),
 			};
+
+			// Display the library assistant prompt(s)
 
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine("I am a library assistant. I can answer questions about the books and authors in the library.");
@@ -141,6 +156,8 @@ namespace DataApiBuilderDemos
 				Console.WriteLine(" ┌── " + message.Text.Replace("\r\n", "\r\n │ ").Replace("\t", string.Empty));
 				Console.WriteLine(" └── ");
 			}
+
+			// Start the chat loop to accept user questions and provide answers
 
 			var autoQuestionIndex = 0;
 
@@ -154,6 +171,8 @@ namespace DataApiBuilderDemos
 				Console.WriteLine();
 
 				var prompt = default(string);
+
+				// Obtain the user prompt (either auto or manual), or exit the loop if the user chooses to quit
 
 				if (key.Key == ConsoleKey.A)
 				{
@@ -192,9 +211,15 @@ namespace DataApiBuilderDemos
 					continue;
 				}
 
+				// Accumulate the user prompt into the chat messages
+
 				messages.Add(new(ChatRole.User, prompt));
 
+				// Collect the streamed response chunks so the complete assistant reply can be added back to the conversation history
+
 				var updates = new List<ChatResponseUpdate>();
+
+				// Stream the assistant response as it is generated, including any MCP tool calls automatically invoked by the chat client
 
 				Console.WriteLine();
 				Console.ForegroundColor = ConsoleColor.Yellow;
@@ -204,8 +229,10 @@ namespace DataApiBuilderDemos
 					updates.Add(update);
 				}
 				Console.ResetColor();
-
 				Console.WriteLine();
+
+				// Add the assistant's full streamed response to the message history so future turns retain conversation context
+
 				messages.AddMessages(updates);
 			}
 
