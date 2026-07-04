@@ -82,9 +82,9 @@ namespace DataApiBuilderDemos
 
 		private static readonly string ExplainProcessPrompt = """
 
-			Beneath each answer, draw a line and then provide a brief explanation of how you arrived at the answer, including which entity
-			and fields were used to retrieve the data. Describe your process as numbered steps, including the raw JSON for
-			requests and responses for all invoked MCP tools.
+			Beneath each answer, draw a line and then provide a brief explanation of how you arrived at the answer,
+			including which entity and fields were used to retrieve the data. Describe your process as numbered
+			steps, including the raw JSON for requests and responses for all invoked MCP tools.
 			
 		""";
 
@@ -160,7 +160,7 @@ namespace DataApiBuilderDemos
 			{
 				new(ChatRole.System, LibraryAssistantMinimalPrompt),
 //				new(ChatRole.System, LibraryAssistantVerbosePrompt),
-//				new(ChatRole.System, ExplainProcessPrompt),
+				new(ChatRole.System, ExplainProcessPrompt),
 			};
 
 			// Display the library assistant prompt(s)
