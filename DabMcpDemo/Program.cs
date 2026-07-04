@@ -186,55 +186,57 @@ namespace DataApiBuilderDemos
 			{
 				Console.ResetColor();
 				Console.WriteLine();
-				Console.Write("[A] = Auto / [M] = Manual / [Q] = Quit: ");
+				Console.Write("[A] = Auto / [M] = Manual / [Esc] = Quit: ");
 
 				var key = Console.ReadKey();
 				Console.WriteLine();
 
-				var prompt = default(string);
+				var question = default(string);
 
-				// Obtain the user prompt (either auto or manual), or exit the loop if the user chooses to quit
+				// Obtain the question (either auto or manual), or exit the loop if the user chooses to quit
 
 				if (key.Key == ConsoleKey.A)
 				{
 					if (autoQuestionIndex >= AutoQuestions.Length)
 					{
+						Console.ForegroundColor = ConsoleColor.Red;
 						Console.WriteLine("No more auto-questions");
-						break;
+						continue;
 					}
 
-					prompt = AutoQuestions[autoQuestionIndex++];
+					question = AutoQuestions[autoQuestionIndex++];
 
-					Console.ForegroundColor = ConsoleColor.Cyan;
 					Console.WriteLine();
-					Console.WriteLine(prompt);
+					Console.Write("> ");
+					Console.ForegroundColor = ConsoleColor.Cyan;
+					Console.WriteLine(question);
 				}
 				else if (key.Key == ConsoleKey.M)
 				{
 					Console.WriteLine();
 					Console.Write("> ");
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					prompt = Console.ReadLine();
+					question = Console.ReadLine();
 
-					if (string.IsNullOrWhiteSpace(prompt))
+					if (string.IsNullOrWhiteSpace(question))
 					{
 						continue;
 					}
 				}
-				else if (key.Key == ConsoleKey.Q)
+				else if (key.Key == ConsoleKey.Escape)
 				{
 					break;
 				}
 				else
 				{
 					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("Invalid option. Please select A, M, or Q.");
+					Console.WriteLine("Invalid option. Please type A, M, or Esc.");
 					continue;
 				}
 
-				// Accumulate the user prompt into the chat messages
+				// Accumulate the question (user prompt) into the chat messages
 
-				messages.Add(new(ChatRole.User, prompt));
+				messages.Add(new(ChatRole.User, question));
 
 				// Collect the streamed response chunks so the complete assistant reply can be added back to the conversation history
 
