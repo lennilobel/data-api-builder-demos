@@ -17,8 +17,15 @@ namespace DataApiBuilderDemos
 			You can answer questions about the books and authors in the library.
 			Explain answers clearly and briefly.
 			Do not invent data.
+			  Exception: You may answer genre-related questions even though the library database has no
+			  genre information. However, you must clearly state that the answer is based on general
+			  knowledge and not the library database.
+		
 			Do not guess at schema (i.e., don't try to figure out plausible entity names and field names).
-			Do not call describe_entities or read_records or execute_entity unless you are sure that the entity and fields exist.
+			Call the describe_entities tool to discover schema
+			Call the read_records tool to retrieve data from table and view entities 
+			Call the execute_entity tool to retrieve data from stored procedure entities 
+			Do not call read_records or execute_entity unless you are sure that the entity and fields exist
 
 		""";
 
@@ -28,7 +35,16 @@ namespace DataApiBuilderDemos
 			You can answer questions about the books and authors in the library.
 			Explain answers clearly and briefly.
 			Do not invent data.
+			  Exception: You may answer genre-related questions even though the library database has no
+			  genre information. However, you must clearly state that the answer is based on general
+			  knowledge and not the library database.
 		
+			Do not guess at schema (i.e., don't try to figure out plausible entity names and field names).
+			Call the describe_entities tool to discover schema
+			Call the read_records tool to retrieve data from table and view entities 
+			Call the execute_entity tool to retrieve data from stored procedure entities 
+			Do not call read_records or execute_entity unless you are sure that the entity and fields exist
+				
 			Before querying an entity for the first time in a conversation, use describe_entities to inspect the available entities and fields.
 				
 			After you understand the schema, remember it for the remainder of the conversation.
@@ -67,7 +83,8 @@ namespace DataApiBuilderDemos
 		private static readonly string ExplainProcessPrompt = """
 
 			Beneath each answer, draw a line and then provide a brief explanation of how you arrived at the answer, including which entity
-			and fields were used to retrieve the data. Describe your process as numbered steps.
+			and fields were used to retrieve the data. Describe your process as numbered steps, including the raw JSON for
+			requests and responses for all invoked MCP tools.
 			
 		""";
 
@@ -83,7 +100,8 @@ namespace DataApiBuilderDemos
 			"What books do you have that were published in 2020 or later?",
 			"I'm looking for books that were co-written by two or more authors, and published in 2020 or later.",
 			"Show me your sci-fi books.",
-			"Show me your database books."
+			"Show me your database books.",
+			"Show me books published in the UK.",
 		];
 
 		static async Task Main(string[] args)
