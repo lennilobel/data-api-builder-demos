@@ -86,7 +86,7 @@ namespace DataApiBuilderDemos
 
 			Beneath each answer, draw a line and then provide a brief explanation of how you arrived at the answer,
 			including which entity and fields were used to retrieve the data. Describe your process as numbered
-			steps, including the raw JSON for requests and responses for all invoked MCP tools.
+			steps, including the request and response details for all invoked MCP tools.
 			
 		""";
 
