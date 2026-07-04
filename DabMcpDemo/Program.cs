@@ -163,7 +163,7 @@ namespace DataApiBuilderDemos
 			{
 				new(ChatRole.System, LibraryAssistantMinimalPrompt),
 //				new(ChatRole.System, LibraryAssistantVerbosePrompt),
-				new(ChatRole.System, ExplainProcessPrompt),
+//				new(ChatRole.System, ExplainProcessPrompt),
 			};
 
 			// Display the library assistant prompt(s)
