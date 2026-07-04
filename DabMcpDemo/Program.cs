@@ -93,7 +93,7 @@ namespace DataApiBuilderDemos
 		private static readonly string[] AutoQuestions =
 		[
 			"How many books are there in the library?",
-			"How many authors are there across all books in the library?",
+			"How many distinct authors are there in the library?",
 			"What books were written by just a single author?",
 			"What books were co-written by two or more authors?",
 			"Show me the books written or co-written by Isaac Asimov.",
